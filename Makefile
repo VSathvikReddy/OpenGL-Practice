@@ -29,4 +29,24 @@ run: $(BUILD_DIR)/$(TARGET_EXEC)
 clean:
 	rm -rf $(BUILD_DIR)
 
+setup:
+	@if [ ! -d external ]; then \
+		echo "Creating externals folder..."; \
+		mkdir external \
+	else \
+		echo "externals folder exists; \
+	fi
+	@if [ ! -d external/glfw ]; then \
+		echo "Cloning GLFW..."; \
+		git clone https://github.com/glfw/glfw.git external/glfw; \
+	else \
+		echo "GLFW already cloned"; \
+	fi
+	cd external/glfw && \
+	mkdir -p build && \
+	cmake -S . -B build -DGLFW_BUILD_WAYLAND=OFF && \
+	cmake --build build && \
+	mkdir -p lib && \
+	cp build/src/libglfw3.a lib/
+
 -include $(DEPS)
