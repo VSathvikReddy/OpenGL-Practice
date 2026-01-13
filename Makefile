@@ -34,7 +34,7 @@ setup:
 		echo "Creating externals folder..."; \
 		mkdir external \
 	else \
-		echo "externals folder exists; \
+		echo "externals folder exists"; \
 	fi
 	@if [ ! -d external/glfw ]; then \
 		echo "Cloning GLFW..."; \
