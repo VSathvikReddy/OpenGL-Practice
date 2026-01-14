@@ -2,7 +2,7 @@ TARGET_EXEC := game
 
 BUILD_DIR := build
 SRC_DIR := src
-INC_DIR := include external/glfw/include
+INC_DIR := include external/glfw/include external/glew/include
 
 SRCS := $(shell find $(SRC_DIR) -name '*.cpp')
 OBJS := $(SRCS:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
@@ -11,7 +11,11 @@ DEPS := $(OBJS:.o=.d)
 INC_FLAGS := $(addprefix -I,$(INC_DIR))
 CPPFLAGS := $(INC_FLAGS) -MMD -MP
 
-LDFLAGS := external/glfw/lib/libglfw3.a -lGL -ldl -pthread
+LDFLAGS := \
+	external/glew/lib/libGLEW.a \
+	external/glfw/lib/libglfw3.a \
+	-lGL -lX11 -lXrandr -lXi -lXcursor -lXinerama \
+	-ldl -pthread
 
 CXX := g++
 
@@ -30,12 +34,20 @@ clean:
 	rm -rf $(BUILD_DIR)
 
 setup:
-	@if [ ! -d external ]; then \
-		echo "Creating externals folder..."; \
-		mkdir external \
+	@mkdir -p external
+
+	@# ---- GLEW ----
+	@if [ ! -d external/glew ]; then \
+		echo "Cloning GLEW..."; \
+		git clone https://github.com/nigels-com/glew.git external/glew; \
 	else \
-		echo "externals folder exists"; \
+		echo "GLEW already cloned"; \
 	fi
+	cd external/glew && \
+	make extensions && \
+	make
+
+	@# ---- GLFW ----
 	@if [ ! -d external/glfw ]; then \
 		echo "Cloning GLFW..."; \
 		git clone https://github.com/glfw/glfw.git external/glfw; \
@@ -43,8 +55,12 @@ setup:
 		echo "GLFW already cloned"; \
 	fi
 	cd external/glfw && \
-	mkdir -p build && \
-	cmake -S . -B build -DGLFW_BUILD_WAYLAND=OFF && \
+	cmake -S . -B build \
+		-DBUILD_SHARED_LIBS=OFF \
+		-DGLFW_BUILD_WAYLAND=OFF \
+		-DGLFW_BUILD_EXAMPLES=OFF \
+		-DGLFW_BUILD_TESTS=OFF \
+		-DGLFW_BUILD_DOCS=OFF && \
 	cmake --build build && \
 	mkdir -p lib && \
 	cp build/src/libglfw3.a lib/
