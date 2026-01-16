@@ -2,14 +2,20 @@ TARGET_EXEC := game
 
 BUILD_DIR := build
 SRC_DIR := src
-INC_DIR := include external/glfw/include external/glew/include
+INC_DIR := src 
 
-SRCS := $(shell find $(SRC_DIR) -name '*.cpp')
-OBJS := $(SRCS:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
+CPP_SRCS := $(shell find $(SRC_DIR) -name '*.cpp')
+C_SRCS   := $(shell find $(SRC_DIR) -name '*.c')
+CPP_OBJS := $(CPP_SRCS:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
+C_OBJS   := $(C_SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
+#SRCS := $(CPP_SRCS) $(C_SRCS)
+OBJS := $(CPP_OBJS) $(C_OBJS)
 DEPS := $(OBJS:.o=.d)
 
-INC_FLAGS := $(addprefix -I,$(INC_DIR))
+INCS := $(shell find $(INC_DIR) -type d) external/glm/glm external/glew/include external/glfw/include
+INC_FLAGS := $(addprefix -I,$(INCS))
 CPPFLAGS := $(INC_FLAGS) -MMD -MP
+CFLAGS   := $(INC_FLAGS) -MMD -MP
 
 LDFLAGS := \
 	external/glew/lib/libGLEW.a \
@@ -18,6 +24,7 @@ LDFLAGS := \
 	-ldl -pthread
 
 CXX := g++
+CC  := gcc
 
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
 	mkdir -p $(BUILD_DIR)
@@ -27,9 +34,14 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	mkdir -p $(dir $@)
 	$(CXX) $(CPPFLAGS) -c $< -o $@
 
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+	mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
+
 run: $(BUILD_DIR)/$(TARGET_EXEC)
 	./$(BUILD_DIR)/$(TARGET_EXEC)
 
+.PHONY: clean
 clean:
 	rm -rf $(BUILD_DIR)
 
@@ -64,5 +76,14 @@ setup:
 	cmake --build build && \
 	mkdir -p lib && \
 	cp build/src/libglfw3.a lib/
+
+	@# ---- GLM ----
+	@if [ ! -d external/glm ]; then \
+		echo "Cloning GLM..."; \
+		git clone https://github.com/g-truc/glm.git external/glm; \
+	else \
+		echo "GLM already cloned"; \
+	fi
+
 
 -include $(DEPS)
