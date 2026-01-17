@@ -1,6 +1,9 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <glm.hpp>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "init.h"
 #include "shader.h"
@@ -82,6 +85,9 @@ int main(){
 
     def.use();
     def.setInt("ourTexture", 0);
+    glm::mat4 projection    = glm::mat4(1.0f);
+    projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+    def.setMat4("projection", glm::value_ptr(projection));
 
 
     while(!glfwWindowShouldClose(window)){
@@ -101,9 +107,14 @@ int main(){
 
         def.use();
         
-        unsigned int transformLoc = glGetUniformLocation(def.getID(), "transform");
-        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, Mat4f::ROT90.data());
+        glm::mat4 model         = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+        glm::mat4 view          = glm::mat4(1.0f);
+        model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f)); 
+        view  = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+        def.setMat4("model",glm::value_ptr(model));
+        def.setMat4("view",&view[0][0]);
 
+        // render container
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
