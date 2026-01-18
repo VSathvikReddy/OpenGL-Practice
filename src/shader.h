@@ -8,6 +8,7 @@
 
 #define DEFAULT_VERTEX_SHADER "shaders/basic.vert"
 #define DEFAULT_FRAGMENT_SHADER "shaders/basic.frag"
+#define LIGHT_FRAGMENT_SHADER "shaders/light.frag"
 
 char* file_read(const std::string& path);
 
@@ -29,6 +30,7 @@ public:
     void setInt(const std::string &name, int value) const;   
     void setFloat(const std::string &name, float value) const;
     void setMat4(const std::string &name, const float* value) const;
+    void setVec3(const std::string &name, float x, float y, float z) const;
 
     void use();
     unsigned int getID() const;
