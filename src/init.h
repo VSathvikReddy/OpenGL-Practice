@@ -8,7 +8,7 @@ extern "C" {
 typedef struct GLFWwindow GLFWwindow;
 
 GLFWwindow* make_window();
-void make_buffer(unsigned int* VBO,unsigned int* VAO, unsigned int* EBO, float* vertices, int vsize, unsigned int* indices, int isize );
+void make_buffer(unsigned int* VBO,unsigned int* VAO, unsigned int* EBO,unsigned int* instacesVBO, float* vertices, int vsize, unsigned int* indices, int isize, float* disp, int dsize );
 void bind_texture(unsigned int* texture);
 void error_callback(int error, const char* description);
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

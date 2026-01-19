@@ -49,16 +49,18 @@ GLFWwindow* make_window(){
     return window;
 }
 
-void make_buffer(unsigned int* VBO,unsigned int* VAO, unsigned int* EBO, float* vertices, int vsize, unsigned int* indices, int isize ){
+void make_buffer(unsigned int* VBO,unsigned int* VAO, unsigned int* EBO,unsigned int* instacesVBO, float* vertices, int vsize, unsigned int* indices, int isize, float* disp, int dsize ){
     glGenVertexArrays(1, VAO);
     glGenBuffers(1, VBO);
     glGenBuffers(1, EBO);
-
+    glGenBuffers(1, instacesVBO);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(*VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, *VBO);
     glBufferData(GL_ARRAY_BUFFER, vsize, vertices, GL_STATIC_DRAW);
+
+
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, isize, indices, GL_STATIC_DRAW);
@@ -67,10 +69,15 @@ void make_buffer(unsigned int* VBO,unsigned int* VAO, unsigned int* EBO, float* 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
     // texture coord attribute
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(2);    
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);    
 
     
+    glBindBuffer(GL_ARRAY_BUFFER, *instacesVBO);
+    glBufferData(GL_ARRAY_BUFFER, dsize, disp, GL_STATIC_DRAW);
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(0));
+    glEnableVertexAttribArray(3);   
+    glVertexAttribDivisor(3,1);
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0); 
 
