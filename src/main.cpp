@@ -36,10 +36,58 @@ glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
 //Matrix mul for view 
 
 // glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+std::vector<float> vertices = {
+// Front (+Z)
+-0.5f, -0.5f,  0.5f,   0.0f,   0.0f,
+0.5f, -0.5f,  0.5f, 1.0f,   0.0f,
+0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
+-0.5f,  0.5f,  0.5f,   0.0f, 1.0f,
 
-std::vector<glm::mat4> make_radom_cubes(){
-    std::vector<glm::mat4> disp;
+// Back (-Z)
+ 0.5f, -0.5f, -0.5f,   0.0f,   0.0f,
+-0.5f, -0.5f, -0.5f, 1.0f,   0.0f,
+-0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+ 0.5f,  0.5f, -0.5f,   0.0f, 1.0f,
+
+// Left (-X)
+-0.5f, -0.5f, -0.5f,   0.0f,   0.0f,
+-0.5f, -0.5f,  0.5f, 1.0f,   0.0f,
+-0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
+-0.5f,  0.5f, -0.5f,   0.0f, 1.0f,
+
+// Right (+X)
+ 0.5f, -0.5f,  0.5f,   0.0f,   0.0f,
+ 0.5f, -0.5f, -0.5f, 1.0f,   0.0f,
+ 0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+ 0.5f,  0.5f,  0.5f,   0.0f, 1.0f,
+
+// Bottom (-Y)
+-0.5f, -0.5f, -0.5f,   0.0f,   0.0f,
+ 0.5f, -0.5f, -0.5f, 1.0f,   0.0f,
+ 0.5f, -0.5f,  0.5f, 1.0f, 1.0f,
+-0.5f, -0.5f,  0.5f,   0.0f, 1.0f,
+
+
+// Top (+Y)
+-0.5f,  0.5f,  0.5f,   0.0f,   0.0f,
+ 0.5f,  0.5f,  0.5f, 1.0f,   0.0f,
+ 0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+-0.5f,  0.5f, -0.5f,   0.0f, 1.0f,
+
+};
+std::vector<unsigned int> indices = {
+    0, 1, 2,  0, 2, 3,
+    4, 5, 6,  4, 6, 7,
+    8, 9,10,  8,10,11,
+   12,13,14, 12,14,15,
+   16,17,18, 16,18,19,
+   20,21,22, 20,22,23
+};
+
+std::vector<float> textoff;
+std::vector<glm::mat4> make_radom_cubes(std::vector<glm::mat4>& disp, std::vector<float>& textoff){
     disp.reserve(10);
+    textoff.reserve(10*2);
 
 
     std::random_device rd;
@@ -48,9 +96,9 @@ std::vector<glm::mat4> make_radom_cubes(){
     std::uniform_real_distribution<float> posDist(-5.0f, 5.0f);
     std::uniform_real_distribution<float> angleDist(0.0f, glm::two_pi<float>());
     std::uniform_real_distribution<float> axisDist(-1.0f, 1.0f);
+    std::uniform_int_distribution<int> texDist(0, 3);
 
-    for (int i = 0; i < 10; i++)
-    {
+    for (int i = 0; i < 10; i++){
         glm::vec3 position(
             posDist(gen),
             posDist(gen),
@@ -71,22 +119,45 @@ std::vector<glm::mat4> make_radom_cubes(){
         model = glm::rotate(model, angle, axis);
 
         disp.push_back(model);
+
+
+        textoff.push_back(0.0f);
+        textoff.push_back(texDist(gen)*0.25f);
     }
     return disp;
 }
+
+void adjust_vertices(float width, float height){
+    for(int i=0;i<24;i++){
+        if(vertices[5*i + 3]==1.0f){
+            vertices[5*i + 3]==width;
+        }if(vertices[5*i + 4]==1.0f){
+            vertices[5*i + 4]==height;
+        }
+
+    }
+}
+
 
 
 int main(){
     GLFWwindow* window = make_window();
     Shader shader(TILEMAP_VERTEX_SHADER,DEFAULT_FRAGMENT_SHADER);
 
-    TileMap map;
+    std::vector<glm::mat4> disp; std::vector<float> texoff;
+    make_radom_cubes(disp,texoff);
+    adjust_vertices(8.0f,8.0f);
+
+    TileMap map(vertices,indices,texoff,"test_text.ppm");
+    // map.sendStaticData(vertices,indices,texoff,"test_text.ppm");
+
 
     shader.use();
     shader.setInt("ourTexture", 0);
+    shader.setVec2("textureDimensions",(float)map.texture.getWidth(),(float)map.texture.getHeight());
+    //shader.setVec2("tempMove",0.0f,0.5f);
 
 
-    std::vector<glm::mat4> disp = make_radom_cubes();
     while(!glfwWindowShouldClose(window)){
         // input
         // -----
@@ -122,7 +193,6 @@ int main(){
 
     }
     glfwDestroyWindow(window);
-    //glDeleteProgram(shaderProgram);
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------

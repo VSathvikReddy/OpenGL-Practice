@@ -103,6 +103,8 @@ void Shader::setBool(const std::string &name, bool value) const{
     glUniform1i(glGetUniformLocation(ID, name.c_str()), value); 
 }void Shader::setFloat(const std::string &name, float value) const{ 
     glUniform1f(glGetUniformLocation(ID, name.c_str()), value); 
+}void Shader::setVec2(const std::string &name, float x, float y) const{
+    glUniform2f(glGetUniformLocation(ID, name.c_str()), x,y);
 }void Shader::setMat4(const std::string &name, const float* value) const{ 
     //                  Where                             How many, No Trans, Value 
     glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, value); 

@@ -100,6 +100,14 @@ void AttributeSet_Mat4(int iniLayout, bool instance){
     }
 }
 
+void AttributeSet_Vec2(int iniLayout, bool instance){
+    glVertexAttribPointer(iniLayout, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(iniLayout);
+    if(instance){
+        glVertexAttribDivisor(iniLayout, 1);
+    }   
+}
+
 
 }
 

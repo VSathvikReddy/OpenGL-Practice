@@ -49,6 +49,7 @@ public:
 void AttributeSet_3_2(int iniLayout = 0,bool instance = false);
 void AttributeSet_Vec4(int iniLayout, bool instance);
 void AttributeSet_Mat4(int iniLayout, bool instance=false);
+void AttributeSet_Vec2(int iniLayout, bool instance);
 
 }
 

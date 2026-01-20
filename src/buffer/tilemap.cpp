@@ -3,69 +3,6 @@
 #include "tilemap.h"
 #include "buffer.h"
 
-std::vector<float> vertices = {
-        // ===== Front face (+Z) =====
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // 0
-        0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // 1
-        0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // 2
-        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f, // 3
-
-        // ===== Back face (-Z) =====
-        0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // 4
-        -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, // 5
-        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // 6
-        0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // 7
-
-        // ===== Left face (-X) =====
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // 8
-        -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // 9
-        -0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // 10
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // 11
-
-        // ===== Right face (+X) =====
-        0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // 12
-        0.5f, -0.5f, -0.5f,  1.0f, 0.0f, // 13
-        0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // 14
-        0.5f,  0.5f,  0.5f,  0.0f, 1.0f, // 15
-
-        // ===== Bottom face (-Y) =====
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // 16
-        0.5f, -0.5f, -0.5f,  1.0f, 0.0f, // 17
-        0.5f, -0.5f,  0.5f,  1.0f, 1.0f, // 18
-        -0.5f, -0.5f,  0.5f,  0.0f, 1.0f, // 19
-
-        // ===== Top face (+Y) =====
-        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, // 20
-        0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // 21
-        0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // 22
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f  // 23
-    };
-    std::vector<unsigned int> indices = {
-        // Front
-        0, 1, 2,
-        0, 2, 3,
-
-        // Back
-        4, 5, 6,
-        4, 6, 7,
-
-        // Left
-        8, 9, 10,
-        8, 10, 11,
-
-        // Right
-        12, 13, 14,
-        12, 14, 15,
-
-        // Bottom
-        16, 17, 18,
-        16, 18, 19,
-
-        // Top
-        20, 21, 22,
-        20, 22, 23
-    };
-
 
 // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
 //Buffer::VBO::unbind();
@@ -80,30 +17,51 @@ void TileMap::unBind(){
     //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     Buffer::VAO::unbind();
 }
-void TileMap::setData(){
+void TileMap::layoutAttributes(){
     vao.bind();
-    vbo.sendData(vertices.size()*sizeof(float),vertices.data());
+    vbo.bind();
     Buffer::AttributeSet_3_2(0);
-
-    ebo.sendData(indices.size()*sizeof(unsigned int), indices.data());
-    
     instacesvbo.bind();
     Buffer::AttributeSet_Mat4(4,true);
+    instaceTexturevbo.bind();
+    Buffer::AttributeSet_Vec2(2,true);
+}
+void TileMap::sendStaticData(const std::vector<float>& vertices,const std::vector<unsigned int>& indices,const std::vector<float>& texoff,const std::string& address){
+    vao.bind();
 
-    texture.loadFromImage(Image("test.ppm"));
+    vbo.sendData(vertices.size()*sizeof(float),vertices.data(),GL_STATIC_DRAW);
+    ebo.sendData(indices.size()*sizeof(unsigned int), indices.data(),GL_STATIC_DRAW);
+    instaceTexturevbo.sendData(indices.size()*sizeof(float),texoff.data(),GL_STATIC_DRAW);
+
+    texture.loadFromImage(Image(address));
     TileMap::unBind();
 }
-void TileMap::sendInstanceData(int size, const void* data,GLenum usage){
+void TileMap::sendInstanceData(int size, const void* data){
+    vao.bind();
     count = size;
-    instacesvbo.sendData(size,data,usage);
+    instacesvbo.sendData(size,data,GL_DYNAMIC_DRAW);
 }
 
 // ==================================================
 //  Constructors
 // ==================================================
 TileMap::TileMap(){
-    TileMap::setData();
+    TileMap::layoutAttributes();
 }
+TileMap::TileMap(const std::vector<float>& vertices,const std::vector<unsigned int>& indices,const std::vector<float>& texoff,const std::string& address){
+    vao.bind();
+    vbo.sendData(vertices.size()*sizeof(float),vertices.data(),GL_STATIC_DRAW);
+    Buffer::AttributeSet_3_2(0);
+    ebo.sendData(indices.size()*sizeof(unsigned int), indices.data(),GL_STATIC_DRAW);
+    instacesvbo.bind();
+    Buffer::AttributeSet_Mat4(4,true);
+    instaceTexturevbo.sendData(indices.size()*sizeof(float),texoff.data(),GL_STATIC_DRAW);
+    Buffer::AttributeSet_Vec2(2,true);
+    
+    texture.loadFromImage(Image(address));
+    TileMap::unBind();
+}
+
 TileMap::~TileMap(){
 }
  

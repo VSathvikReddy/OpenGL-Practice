@@ -15,20 +15,25 @@ using mat4f = glm::mat4;
 class TileMap{
 private:
     Buffer::VAO vao;
-    Buffer::VBO vbo,instacesvbo;
+    Buffer::VBO vbo,instacesvbo, instaceTexturevbo;
     Buffer::EBO ebo;
 
     int count;
-    Texture texture;
+    
 
     void unBind();
-    void setData();
+    void layoutAttributes();
 public:
+    Texture texture;
+
     TileMap();
+    TileMap(const std::vector<float>& vertices,const std::vector<unsigned int>& indices,const std::vector<float>& texoff,const std::string& address);
     ~TileMap();
 
     void setTexture(const Image& image);
-    void sendInstanceData(int size, const void* data,GLenum usage = GL_DYNAMIC_DRAW);
+    void sendStaticData(const std::vector<float>& vertices,const std::vector<unsigned int>& indices,const std::vector<float>& texoff,const std::string& address);
+
+    void sendInstanceData(int size, const void* data);
     void draw() const;
 };
 
