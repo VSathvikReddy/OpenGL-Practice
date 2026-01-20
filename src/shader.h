@@ -8,6 +8,7 @@
 
 #define DEFAULT_VERTEX_SHADER "shaders/basic.vert"
 #define DEFAULT_FRAGMENT_SHADER "shaders/basic.frag"
+#define TILEMAP_VERTEX_SHADER "shaders/tilemap.vert"
 
 char* file_read(const std::string& path);
 

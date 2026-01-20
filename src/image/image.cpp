@@ -7,6 +7,9 @@
 #include <cstring>
 #include <vector>
 
+// ==================================================
+//  Constructors
+// ==================================================
 Image::Image(const std::string& path){
     loadImageFromFile(path);
 }

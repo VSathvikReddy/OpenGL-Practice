@@ -3,22 +3,26 @@
 
 #include <GL/glew.h>
 
-Texture::Texture(const Image& image):width(image.width), height(image.height), channels(image.channels){
+// ==================================================
+//  Constructors
+// ==================================================
+Texture::Texture(){
     glGenTextures(1, &textureID);
     set_config();
-    upload_data(image.data);
-}
-
-Texture::~Texture(){
+}Texture::Texture(const Image& image):Texture(){
+    loadFromImage(image);
+}Texture::~Texture(){
     glDeleteTextures(1, &textureID);
 }
 
-void Texture::bind(){
+// ==================================================
+//  Private Functions
+// ==================================================
+void Texture::bind() const{
     glBindTexture(GL_TEXTURE_2D, textureID);
 }
-
 void Texture::set_config(){
-    bind();
+    Texture::bind();
     // set the texture wrapping parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -27,7 +31,7 @@ void Texture::set_config(){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 void Texture::upload_data(const unsigned char* data){
-    bind();
+    Texture::bind();
     GLenum format = GL_RGB;
     if(channels == 1)
         format = GL_RED;
@@ -40,8 +44,17 @@ void Texture::upload_data(const unsigned char* data){
     glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
 }
-
-void Texture::use(){
+// ==================================================
+//  Public Functions
+// ==================================================
+bool Texture::loadFromImage(const Image& image){
+    width = image.width;
+    height = image.height;
+    channels = image.channels;
+    Texture::upload_data(image.data);
+    return true;
+}
+void Texture::use() const {
     glActiveTexture(GL_TEXTURE0);
-    bind();
+    Texture::bind();
 }
