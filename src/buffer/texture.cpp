@@ -1,5 +1,5 @@
-#include "image/texture.h"
-#include "image/image.h"
+#include "texture.h"
+#include "image.h"
 
 #include <GL/glew.h>
 
