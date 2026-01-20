@@ -8,6 +8,7 @@
 #include "init.h"
 #include "shader.h"
 #include "image.h"
+#include "texture.h"
 #include "linal.h"
 
 #include <iostream>
@@ -27,7 +28,7 @@ glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
 
 int main(){
     GLFWwindow* window = make_window();
-    Shader def(DEFAULT_VERTEX_SHADER,DEFAULT_FRAGMENT_SHADER);
+    Shader shader(DEFAULT_VERTEX_SHADER,DEFAULT_FRAGMENT_SHADER);
     
     
     // set up vertex data (and buffer(s)) and configure vertex attributes
@@ -113,26 +114,15 @@ float disp[] = {
     // glEnableVertexAttribArray(3);   
     // glVertexAttribDivisor(3,1);
 
-    // load and create a texture 
-    // -------------------------
-    unsigned int texture;
-    bind_texture(&texture);
-    // load image, create texture and generate mipmaps
     Image test;test.loadImageFromFile("test.ppm");
+    Texture texture(test);
 
-
-    //tells OpenGL not to expect padding at the end of each image row
-    //glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, test.width, test.height, 0, GL_RGB, GL_UNSIGNED_BYTE, test.data);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-
-    def.use();
-    def.setInt("ourTexture", 0);
+    shader.use();
+    shader.setInt("ourTexture", 0);
     
     glm::mat4 projection    = glm::mat4(1.0f);
     projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-    def.setMat4("projection", glm::value_ptr(projection));
+    shader.setMat4("projection", glm::value_ptr(projection));
 
     // glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);  
     //glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -154,25 +144,21 @@ float disp[] = {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // bind Texture
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture);
-        // render container
-
-        def.use();
+        texture.use();
+        shader.use();
         
         glm::mat4 model         = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
         model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f)); 
 
         glm::mat4 view;                                      //CameraUp
         view = glm::lookAt(cameraPos, cameraFront+cameraPos, glm::vec3(0.0, 1.0, 0.0));
-        def.setMat4("view",&view[0][0]);
+        shader.setMat4("view",&view[0][0]);
 
         // render container
         glBindVertexArray(VAO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 
-        def.setMat4("model", &model[0][0]);
+        shader.setMat4("model", &model[0][0]);
 
         glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0, 3);
         //glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
