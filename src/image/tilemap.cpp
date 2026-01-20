@@ -66,12 +66,6 @@ std::vector<float> vertices = {
         20, 22, 23
     };
 
-std::vector<glm::mat4> disp = {
-    glm::mat4(1.0f),
-    glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 0.0f)),45.0f,glm::vec3(0.0f,1.0f,0.0f)),
-    glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 2.0f, 0.0f))
-};
-
 
 // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
 //Buffer::VBO::unbind();
@@ -93,12 +87,15 @@ void TileMap::setData(){
 
     ebo.sendData(indices.size()*sizeof(unsigned int), indices.data());
     
-    count = disp.size();
-    instacesvbo.sendData(disp.size()*sizeof(glm::mat4),disp.data());
+    instacesvbo.bind();
     Buffer::AttributeSet_Mat4(4,true);
 
     texture.loadFromImage(Image("test.ppm"));
     TileMap::unBind();
+}
+void TileMap::sendInstanceData(int size, const void* data,GLenum usage){
+    count = size;
+    instacesvbo.sendData(size,data,usage);
 }
 
 // ==================================================

@@ -21,7 +21,7 @@ Texture::Texture(){
 void Texture::bind() const{
     glBindTexture(GL_TEXTURE_2D, textureID);
 }
-void Texture::set_config(){
+void Texture::set_config() const{
     Texture::bind();
     // set the texture wrapping parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
@@ -30,7 +30,7 @@ void Texture::set_config(){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
-void Texture::upload_data(const unsigned char* data){
+void Texture::upload_data(const unsigned char* data) const{
     Texture::bind();
     GLenum format = GL_RGB;
     if(channels == 1)
@@ -47,6 +47,12 @@ void Texture::upload_data(const unsigned char* data){
 // ==================================================
 //  Public Functions
 // ==================================================
+unsigned int Texture::getWidth() const{
+    return width;
+}unsigned int Texture::getHeight() const{
+    return height;
+}
+
 bool Texture::loadFromImage(const Image& image){
     width = image.width;
     height = image.height;
