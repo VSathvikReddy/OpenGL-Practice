@@ -14,7 +14,7 @@ private:
 public:
     VAO();
     ~VAO();
-    void bind();
+    void bind() const;
     static void unbind();
 };
 
@@ -24,11 +24,26 @@ private:
 public:
     VBO();
     ~VBO();
-    void bind();
+    void bind() const;
     static void unbind();
 
-    void sendData(std::vector<float> vertices,GLenum usage=GL_STATIC_DRAW);
+    void sendData(int size, const void* data,GLenum usage=GL_STATIC_DRAW);
 };
+
+class  EBO{
+private:
+    unsigned int ID;
+public:
+    EBO();
+    ~EBO();
+
+    void bind() const;
+    static void unbind();
+
+    void sendData(int size, const void* data,GLenum usage=GL_STATIC_DRAW);
+};
+
+
 
 
 void AttributeSet_3_2(int iniLayout = 0,bool instance = false);

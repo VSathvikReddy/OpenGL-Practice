@@ -9,12 +9,18 @@ VAO::VAO(){
 VAO::~VAO(){
     glDeleteVertexArrays(1, &ID);
 }
-void VAO::bind(){
+void VAO::bind() const{
     glBindVertexArray(ID);
 }
 void VAO::unbind(){
     glBindVertexArray(0);
 }
+
+
+
+
+
+
 
 VBO::VBO(){
     glGenBuffers(1, &ID);
@@ -24,7 +30,7 @@ VBO::~VBO(){
     glDeleteBuffers(1, &ID);
 }
 
-void VBO::bind(){
+void VBO::bind() const{
     //Must be called only after array is bound
     glBindBuffer(GL_ARRAY_BUFFER, ID);
 }
@@ -33,12 +39,34 @@ void VBO::unbind(){
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void VBO::sendData(std::vector<float> vertices,GLenum usage){
+void VBO::sendData(int size, const void* data,GLenum usage){
     VBO::bind();
-    glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(float), vertices.data(), usage);
+    glBufferData(GL_ARRAY_BUFFER, size, data, usage);
 }
 
 
+
+
+
+
+
+EBO::EBO(){
+    glGenBuffers(1, &ID);
+}
+
+EBO::~ EBO(){
+    glDeleteBuffers(1, &ID);
+}
+void EBO::bind() const{
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
+}
+void EBO::unbind(){
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+void EBO::sendData(int size, const void* data,GLenum usage){
+    EBO::bind();
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, usage);
+}
 
 void AttributeSet_3_2(int iniLayout, bool instance){
 

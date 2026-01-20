@@ -40,7 +40,6 @@ int main(){
     Shader shader(TILEMAP_VERTEX_SHADER,DEFAULT_FRAGMENT_SHADER);
 
     TileMap map;
-    map.setTexture(Image("test.ppm"));
 
     shader.use();
     shader.setInt("ourTexture", 0);
@@ -67,7 +66,7 @@ int main(){
         shader.setMat4("view",&view[0][0]);
 
         // render container
-        map.draw(3);
+        map.draw();
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------

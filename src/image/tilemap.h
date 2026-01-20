@@ -11,13 +11,15 @@
 
 class TileMap{
 private:
-    
-    unsigned int VBO, VAO, EBO,instacesVBO;
+    Buffer::VAO vao;
+    Buffer::VBO vbo,instacesvbo;
+    Buffer::EBO ebo;
+
+    int count;
     Texture texture;
 
-    void bindVAO();
-    void bindVBOs();
-    void unBindVAO();
+    void unBind();
+    void setData();
 public:
     TileMap();
     ~TileMap();
@@ -25,7 +27,7 @@ public:
     void setTexture(const Image& image);
     void setInstances(const std::vector<glm::mat4>& transforms);
 
-    void draw(std::size_t instanceCount) const;
+    void draw() const;
 };
 
 
