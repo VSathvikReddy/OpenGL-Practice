@@ -17,6 +17,10 @@ Image::~Image(){
     if(this->data)
         delete[] (this->data);
 }
+
+// ==================================================
+//  Public Functions
+// ==================================================
 void Image::flipVertical(){
     int rowSize = this->width * 3;
     std::vector<unsigned char> temp(rowSize);

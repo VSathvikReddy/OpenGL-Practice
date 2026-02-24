@@ -24,10 +24,9 @@ public:
         width=2;
         height=2;
         channels=3;
-        //Pading end 0's which open gl expetcts by default //glPixelStorei(GL_UNPACK_ALIGNMENT, 1); to tell no padding needed
         data = new unsigned char[16]{
-            255,0,0,   0,255,0,0,0,
-            0,0,255,   255,255,0,0,0
+            255,0,0,   0,255,0,
+            0,0,255,   255,255,0
         };
     }
 };

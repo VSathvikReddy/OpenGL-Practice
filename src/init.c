@@ -37,7 +37,7 @@ GLFWwindow* make_window(){
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
+    //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
     if(glewInit() != GLEW_OK){
         fprintf(stderr, "glew did not initialise properlyy\n");
         exit(1);
@@ -98,5 +98,6 @@ void error_callback(int error, const char* description){
 void framebuffer_size_callback(GLFWwindow* window, int width, int height){
     // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
+    printf("%d %d\n",width,height);
     glViewport(0, 0, width, height);
 }

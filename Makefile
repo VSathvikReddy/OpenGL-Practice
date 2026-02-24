@@ -15,7 +15,6 @@ DEPS := $(OBJS:.o=.d)
 INCS := $(shell find $(INC_DIR) -type d) external/glm external/glew/include external/glfw/include
 INC_FLAGS := $(addprefix -I,$(INCS))
 CPPFLAGS := $(INC_FLAGS) -MMD -MP
-CFLAGS   := $(INC_FLAGS) -MMD -MP
 
 LDFLAGS := \
 	external/glew/lib/libGLEW.a \
@@ -36,7 +35,7 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CPPFLAGS) -c $< -o $@
 
 run: $(BUILD_DIR)/$(TARGET_EXEC)
 	./$(BUILD_DIR)/$(TARGET_EXEC)
