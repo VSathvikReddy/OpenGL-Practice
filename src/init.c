@@ -10,21 +10,20 @@
 
 GLFWwindow* make_window(){
 
+    glfwSetErrorCallback(error_callback);
+
     /* Initialize the library */
-    if (!glfwInit()){
+    if (glfwInit()!=GLFW_TRUE){
         fprintf(stderr, "glfw did not initialise properly\n");
         exit(1);
-    }   
+    } 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
-
-
-    glfwSetErrorCallback(error_callback);
-
+    
 
     /* Create a windowed mode window and its OpenGL context */
     GLFWwindow* window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
@@ -38,14 +37,15 @@ GLFWwindow* make_window(){
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    if(glewInit() != GLEW_OK){
-        fprintf(stderr, "glew did not initialise properlyy\n");
+    GLenum GLsucess = glewInit();
+    if(GLsucess != GLEW_OK){
+        fprintf(stderr, "GLEW Initialization Error: %s\n",glewGetErrorString(GLsucess));
         exit(1);
     }
     glEnable(GL_DEPTH_TEST);  
 
     printf("%s\n",glGetString(GL_VERSION));
-
+    
     return window;
 }
 
@@ -84,7 +84,7 @@ void bind_texture(unsigned int* texture){
 
 //Function called in case of error
 void error_callback(int error, const char* description){
-    fprintf(stderr, "Error: %s\n", description);
+    fprintf(stderr, "GLFW Error: %s\n", description);
 }
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
