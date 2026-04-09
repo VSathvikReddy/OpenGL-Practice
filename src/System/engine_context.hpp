@@ -11,6 +11,6 @@ public:
     float deltaTime = 0.0f;
 
 
-    EngineContext(Window* window);
+    EngineContext(Window* window_);
     ~EngineContext();
 };

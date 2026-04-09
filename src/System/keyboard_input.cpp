@@ -26,7 +26,7 @@ bool KeyboardInput::IsKeyHeld(Key key) {
 // }
 
 // The Static Bridge for polling
-void KeyboardInput::GLFW_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+void KeyboardInput::GLFW_key_callback(GLFWwindow* window, int key,[[maybe_unused]] int scancode, int action,[[maybe_unused]] int mods) {
     // Retrieve our Singleton instance from the window pointer
     KeyboardInput* instance = static_cast<EngineContext*>(glfwGetWindowUserPointer(window))->keyboard;
     //if (!KeyboardInput || key < 0 || key >= 512) return;

@@ -2,19 +2,18 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include "shader.hpp"
-
+#include "Shader/shader.hpp"
 
 //Changes to be made
-char* file_read(const std::string& path){
-    FILE* f = fopen(path.c_str(), "rb");
+char* file_read(const char* path){
+    FILE* f = fopen(path, "rb");
     if (!f) return NULL;
 
     fseek(f, 0, SEEK_END);
     long size = ftell(f);
     rewind(f);
 
-    char* buffer = (char*)malloc(size + 1);
+    char* buffer = static_cast<char*>(malloc(size + 1));
     if (!buffer) {
         fclose(f);
         return NULL;
@@ -61,7 +60,7 @@ unsigned int Shader::linkShaders(unsigned int vertexShader, unsigned int fragmen
     return shaderProgram;
 }
 
-Shader::Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath){
+Shader::Shader(const char* vertexShaderPath, const char* fragmentShaderPath){
     char* vertexShaderSource = file_read(vertexShaderPath);
     char* fragmentShaderSource = file_read(fragmentShaderPath);
     if(!vertexShaderSource || !fragmentShaderSource){
@@ -97,15 +96,4 @@ unsigned int Shader::getID() const{
 }
 
 
-void Shader::setBool(const std::string &name, bool value) const{         
-    glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value); 
-}void Shader::setInt(const std::string &name, int value) const{ 
-    glUniform1i(glGetUniformLocation(ID, name.c_str()), value); 
-}void Shader::setFloat(const std::string &name, float value) const{ 
-    glUniform1f(glGetUniformLocation(ID, name.c_str()), value); 
-}void Shader::setMat4(const std::string &name, const float* value) const{ 
-    //                  Where                             How many, No Trans, Value 
-    glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, value); 
-}void Shader::setVec3(const std::string &name, float x, float y, float z) const {
-    glUniform3f(glGetUniformLocation(ID, name.c_str()), x, y, z);
-}
+

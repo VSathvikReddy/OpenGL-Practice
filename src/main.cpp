@@ -27,7 +27,7 @@ glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
 
 #include "VertexBuffer/vertex.hpp"
 int main(){
-    Window abwindow({640, 480, "Hello World"});
+    Window abwindow({100,1000 , "Dragon"});
     GLFWwindow* window = abwindow.GetNativeWindow();
     Shader lightCubeShader(DEFAULT_VERTEX_SHADER,LIGHT_FRAGMENT_SHADER);
     Shader lightingShader(DEFAULT_VERTEX_SHADER,DEFAULT_FRAGMENT_SHADER);
@@ -62,21 +62,23 @@ int main(){
         // be sure to activate shader when setting uniforms/drawing objects
 
         lightingShader.use();
-        lightingShader.setVec3("lightPos", lightPos.x,lightPos.y,lightPos.z);  
-        lightingShader.setVec3("viewPos", cameraPos.x,cameraPos.y,cameraPos.z); 
+        lightingShader.setUniform("lightPos", Vec3f(lightPos.x,lightPos.y,lightPos.z));  
+        lightingShader.setUniform("viewPos", Vec3f(cameraPos.x,cameraPos.y,cameraPos.z)); 
         float clr = (((int)glfwGetTime()*100) % 1000)/1000.0f;
 
-        lightingShader.setVec3("material.ambient", 1.0f, clr, 1-clr);
-        lightingShader.setVec3("material.diffuse", 1.0f, clr, 1-clr);
-        lightingShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
-        lightingShader.setFloat("material.shininess", 32.0f);
+        lightingShader.setUniforms(
+            "material.ambient",Vec3f(1.0f, clr, 1-clr),
+            "material.diffuse", Vec3f(1.0f, clr, 1-clr),
+            "material.specular", Vec3f(0.5f, 0.5f, 0.5f),
+            "material.shininess", 32.0f
+        );
         
         // view/projection transformations
-        glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(45.0f),(float) abwindow.getProperties().width / abwindow.getProperties().height, 0.1f, 100.0f);
         glm::mat4 view;                                      //CameraUp
         view = glm::lookAt(cameraPos, cameraFront+cameraPos, glm::vec3(0.0, 1.0, 0.0));
-        lightingShader.setMat4("projection", &projection[0][0]);
-        lightingShader.setMat4("view", &view[0][0]);
+        lightingShader.setUniform("projection", projection);
+        lightingShader.setUniform("view", view);
 
         // world transformation
         glm::mat4 model = glm::mat4(1.0f);
@@ -85,7 +87,7 @@ int main(){
         model = glm::rotate(model, angle, glm::normalize(axis));
         model = glm::rotate(model, glm::radians(-90.0f),glm::vec3(1.0f, 0.0f,0.0f));
 
-        lightingShader.setMat4("model", &model[0][0]);
+        lightingShader.setUniform("model", model);
 
         // render the cube
         cube.draw();
@@ -94,12 +96,12 @@ int main(){
 
         // also draw the lamp object
         lightCubeShader.use();
-        lightCubeShader.setMat4("projection", &projection[0][0]);
-        lightCubeShader.setMat4("view", &view[0][0]);
+        lightCubeShader.setUniform("projection", projection);
+        lightCubeShader.setUniform("view", view);
         model = glm::mat4(1.0f);
         model = glm::translate(model, lightPos);
         model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
-        lightCubeShader.setMat4("model", &model[0][0]);
+        lightCubeShader.setUniform("model", model);
 
         lightcube.draw();
         // glBindVertexArray(lightCubeVAO);

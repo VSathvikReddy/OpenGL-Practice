@@ -14,14 +14,23 @@ DEPS := $(OBJS:.o=.d)
 
 INCS := $(shell find $(INC_DIR) -type d) external/glm external/glew/include external/glfw/include
 INC_FLAGS := $(addprefix -I,$(INCS))
+# (C Preprocessor Flags)
 CPPFLAGS := $(INC_FLAGS) -MMD -MP
-CFLAGS   := $(INC_FLAGS) -MMD -MP
 
+
+# (External Libraries and Linker Flags)
 LDFLAGS := \
 	external/glew/lib/libGLEW.a \
 	external/glfw/lib/libglfw3.a \
 	-lGL -lX11 -lXrandr -lXi -lXcursor -lXinerama \
 	-ldl -pthread
+
+# (C++ Compiler Flags)
+CXXFLAGS := -std=c++17
+Warning_FLAGS := -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Woverloaded-virtual -Wnull-dereference -Wold-style-cast -Wsuggest-override -Wpessimizing-move -Wmisleading-indentation -Wduplicated-cond -Woverloaded-virtual -Wunused -Wcast-align
+# -Wconversion, -Wsign-conversion, -Wdouble-promotion
+# (C Compiler Flags)
+CFLAGS   := 
 
 CXX := g++
 CC  := gcc
@@ -32,14 +41,15 @@ $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	mkdir -p $(dir $@)
-	$(CXX) $(CPPFLAGS) -c $< -o $@
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 run: $(BUILD_DIR)/$(TARGET_EXEC)
 	./$(BUILD_DIR)/$(TARGET_EXEC)
+
 
 .PHONY: clean
 clean:

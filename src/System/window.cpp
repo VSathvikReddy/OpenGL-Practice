@@ -49,9 +49,11 @@ Window::Window(const WindowProperties& properties):m_Properties(properties){
     glfwSetFramebufferSizeCallback(m_Window, GLFW_framebuffer_size_callback);
 
     init_glew();
+    glfwSetWindowUserPointer(m_Window,static_cast<void*> ( new EngineContext(this)));    
 }
 
 Window::~Window(){
+    delete static_cast<EngineContext*>(glfwGetWindowUserPointer(m_Window));
     if (m_Window){
         glfwDestroyWindow(m_Window);
     }
@@ -62,18 +64,23 @@ Window::~Window(){
 GLFWwindow* Window::GetNativeWindow() const {
     return m_Window;
 }
+const WindowProperties& Window::getProperties() const{
+    return m_Properties;
+}
 
-void Window::GLFW_error_callback(int error, const char* description){
+#include <iostream>
+void Window::GLFW_error_callback([[maybe_unused]] int error, const char* description){
     fprintf(stderr, "GLFW Error: %s\n", description);
 }
 void Window::GLFW_framebuffer_size_callback(GLFWwindow* window, int width, int height){
     // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
-
     EngineContext* instance = static_cast<EngineContext*>(glfwGetWindowUserPointer(window));
     if(instance){
         instance->window->m_Properties.width = width;
-        instance->window->m_Properties.width = height;
+        instance->window->m_Properties.height = height;
+        std::cout<<instance->window->m_Properties.height<<' '<<instance->window->m_Properties.width<<'\n';
+
     }
 }

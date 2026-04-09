@@ -138,7 +138,7 @@ const Triangle* Mesh::getRaw() const{
 
 std::vector<Vertex> Mesh::genVertices() const{
     std::vector<Vertex> out(m_TriangleCount*3);
-    for(int i=0;i<m_TriangleCount;i++){
+    for(size_t i=0;i<m_TriangleCount;i++){
         auto get_vert = [&](int x){
             out[i*3+x] = Vertex{
                 {m_Triangles[i].v[x][0],m_Triangles[i].v[x][1],m_Triangles[i].v[x][2]},

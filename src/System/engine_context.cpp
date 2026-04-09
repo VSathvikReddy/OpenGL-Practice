@@ -6,7 +6,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-EngineContext::EngineContext(Window* window):window(window){\
+EngineContext::EngineContext(Window* window_):window(window_){\
     GLFWwindow* native = window->GetNativeWindow();
     glfwSetWindowUserPointer(native, this);
 

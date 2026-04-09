@@ -16,6 +16,7 @@ public:
     ~Window();
 
     GLFWwindow* GetNativeWindow() const;
+    const WindowProperties& getProperties() const;
 private:
     GLFWwindow* m_Window;
     WindowProperties m_Properties;
