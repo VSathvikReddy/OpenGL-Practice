@@ -2,7 +2,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include "shader.h"
+#include "shader.hpp"
 
 
 //Changes to be made

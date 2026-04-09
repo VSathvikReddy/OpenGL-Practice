@@ -55,7 +55,7 @@ Window::~Window(){
     if (m_Window){
         glfwDestroyWindow(m_Window);
     }
-    glfwTerminate();
+    glfwTerminate();     // glfw: terminate, clearing all previously allocated GLFW resources.
 }
 
 

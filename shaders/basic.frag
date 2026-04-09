@@ -13,7 +13,9 @@ uniform vec3 lightPos;
 uniform vec3 viewPos;
 
 in vec3 Normal; 
-in vec3 FragPos; 
+in vec3 FragPos;
+// in vec4 vColor;
+
 
 void main()
 {

@@ -8,47 +8,6 @@
 #include <stdlib.h>
 
 
-GLFWwindow* make_window(){
-
-    glfwSetErrorCallback(error_callback);
-
-    /* Initialize the library */
-    if (glfwInit()!=GLFW_TRUE){
-        fprintf(stderr, "glfw did not initialise properly\n");
-        exit(1);
-    } 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
-    
-
-    /* Create a windowed mode window and its OpenGL context */
-    GLFWwindow* window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
-    if (!window){
-        fprintf(stderr, "glfw window did not open properly\n");
-        glfwTerminate();
-        exit(1);
-    }
-
-    /* Make the window's context current */
-    glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
-    GLenum GLsucess = glewInit();
-    if(GLsucess != GLEW_OK){
-        fprintf(stderr, "GLEW Initialization Error: %s\n",glewGetErrorString(GLsucess));
-        exit(1);
-    }
-    glEnable(GL_DEPTH_TEST);  
-
-    printf("%s\n",glGetString(GL_VERSION));
-    
-    return window;
-}
-
 void make_buffer(unsigned int* VBO,unsigned int* VAO, unsigned int* EBO, float* vertices, int vsize, unsigned int* indices, int isize ){
     glGenVertexArrays(1, VAO);
     glGenBuffers(1, VBO);
@@ -80,17 +39,4 @@ void bind_texture(unsigned int* texture){
     // set texture filtering parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-}
-
-//Function called in case of error
-void error_callback(int error, const char* description){
-    fprintf(stderr, "GLFW Error: %s\n", description);
-}
-// glfw: whenever the window size changed (by OS or user resize) this callback function executes
-// ---------------------------------------------------------------------------------------------
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-    // make sure the viewport matches the new window dimensions; note that width and 
-    // height will be significantly larger than specified on retina displays.
-    glViewport(0, 0, width, height);
 }
