@@ -1,6 +1,7 @@
 external
 build
 Arena
-test.ppm
 
+*.ppm
+*.stl
 .vscode

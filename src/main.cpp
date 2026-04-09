@@ -91,8 +91,6 @@ int main(){
 
         // render the cube
         cube.draw();
-        // glBindVertexArray(cubeVAO);
-        // glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
         // also draw the lamp object
         lightCubeShader.use();
@@ -104,20 +102,11 @@ int main(){
         lightCubeShader.setUniform("model", model);
 
         lightcube.draw();
-        // glBindVertexArray(lightCubeVAO);
-        // glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
         glfwPollEvents();
 
     }
-    // glDeleteVertexArrays(1, &cubeVAO);
-    // glDeleteVertexArrays(1, &lightCubeVAO);
-    // glDeleteBuffers(1, &VBO);
-    // glDeleteBuffers(1, &EBO);
-    //glDeleteProgram(shaderProgram);
 
 
     return 0;
