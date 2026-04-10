@@ -12,7 +12,7 @@ C_OBJS   := $(C_SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 OBJS := $(CPP_OBJS) $(C_OBJS)
 DEPS := $(OBJS:.o=.d)
 
-INCS := $(shell find $(INC_DIR) -type d) external/glm external/glew/include external/glfw/include
+INCS := $(shell find $(INC_DIR) -type d) external/glm external/glew/include external/glfw/include external/stb
 INC_FLAGS := $(addprefix -I,$(INCS))
 # (C Preprocessor Flags)
 CPPFLAGS := $(INC_FLAGS) -MMD -MP

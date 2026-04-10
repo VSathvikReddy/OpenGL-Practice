@@ -49,6 +49,7 @@ Window::Window(const WindowProperties& properties):m_Properties(properties){
     glfwSetFramebufferSizeCallback(m_Window, GLFW_framebuffer_size_callback);
 
     init_glew();
+    //glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetWindowUserPointer(m_Window,static_cast<void*> ( new EngineContext(this)));    
 }
 

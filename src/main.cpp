@@ -49,11 +49,22 @@ int main(){
     // glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 
     glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+glfwMakeContextCurrent(window);
+// ...
+//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     while(!glfwWindowShouldClose(window)){
         // input
         // -----
         processInput(window);
-
+int mode = glfwGetInputMode(window, GLFW_CURSOR);
+if (mode == GLFW_CURSOR_DISABLED) {
+    printf("Cursor successfully disabled in code.\n");
+} else {
+    printf("Cursor is NOT disabled. Current mode: %d\n", mode);
+}
+double x, y;
+glfwGetCursorPos(window, &x, &y);
+printf("Pos: %.2f, %.2f\n", x, y);
         // render
         // ------
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
